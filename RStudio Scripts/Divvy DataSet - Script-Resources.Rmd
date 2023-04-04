@@ -4,7 +4,7 @@ output: html_notebook
 ---
 Introduction: This was my first time reaching the Memory limit, with more than a gb of data and without being able to work it with Python without 
 using chunks or doing some "tricks", however R came to save me and was able to work it easily. Both are strong tools but I prefer python, maybe I
-should use Polar for working and leave Pandas as a lot of Data Scientist decided to.
+should use Polar for working and leave Pandas as a lot of Data Scientists decided to.
 
 If you need to use this work, feel happy to copy or use it to learn by yourself!
 Greets, 
