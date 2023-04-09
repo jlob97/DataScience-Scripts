@@ -1,0 +1,174 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+### Loading and installing packages for working
+
+```{r}
+install.packages("tidyverse")
+install.packages("lubridate")
+install.packages("ggplot2")
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+```
+
+#load the dataset, after analyzing the data available, most of data was irrelevant or incomplete, dailityactivity_merged, had most of the useful data already in a single CSV, the same happens with sleepday. I could not give any use to heartrate, and also the data is incomplete and does not represent all population.
+
+#Also renamed DailyActivity to work easily.
+
+```{r}
+daily_activity <- read.csv("dailyActivity.csv")
+```
+
+```{r}
+sleep_day <- read.csv("sleepDay.csv")
+```
+
+## Exploring a little of the data table in R, specially to see the datatypes, also it looks like the "ActivityDate" is not a date type, also I need to check why ID is a float, it might be an Integer.
+
+```{r}
+head(daily_activity)
+```
+
+# Checking the columns
+
+```{r}
+colnames(daily_activity)
+```
+
+# Same work for Sleep_day, also the same issues reappear.
+
+```{r}
+head(sleep_day)
+```
+
+```{r}
+colnames(sleep_day)
+```
+
+## Understanding the ammount of parcitipants in the data.
+
+```{r distinct users}
+n_distinct(daily_activity$Id)
+n_distinct(sleep_day$Id)
+```
+
+### Analyzing rows of data or sucesses.
+
+```{r observations}
+nrow(daily_activity)
+nrow(sleep_day)
+```
+
+### Some stats, of the most important data.
+
+For the daily activity dataframe:
+```{r}
+daily_activity %>%  
+  select(TotalSteps,
+         TotalDistance,
+         SedentaryMinutes) %>%
+  summary()
+```
+
+### For the sleep dataframe:
+
+```{r}
+sleep_day %>%  
+  select(TotalSleepRecords,
+  TotalMinutesAsleep,
+  TotalTimeInBed) %>%
+  summary()
+```
+
+What does this tell us about how this sample of people's activities? 
+
+## Plotting a little for exploration
+
+```{r}
+ggplot(data=daily_activity, aes(x=TotalSteps, y=SedentaryMinutes)) + geom_point()
+```
+
+```{r}
+ggplot(data=sleep_day, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) + geom_point()
+```
+
+## Merging these two datasets together, to see if time in bed and sedentary minutes also have a relationship.
+
+```{r}
+combined_data_ij <- merge(sleep_day, daily_activity, by="Id")
+```
+
+```{r}
+n_distinct(combined_data$Id)
+```
+
+### Merged with a inner join, merging an second data with outer join to keep the data from both.
+
+```{r}
+combined_data_oj <- merge(sleep_day, daily_activity, by="Id", all=TRUE)
+```
+
+```{r}
+n_distinct(combined_data$Id)
+```
+### Working with the dataset to get more data.
+
+```{r}
+str(combined_data_ij)
+```
+### Found a problem with format of SleepDay and Activity Date, fixing it by extracting a part of the string to match. Good practice is to not modify the initial dataaset, so im creating v2.
+# Resources (https://stackoverflow.com/questions/17031002/get-weekdays-in-english-in-r)
+
+```{r}
+sleepday_v2 <- sleep_day %>% mutate(Date = substring(SleepDay,1,9))
+daily_activity_v2 <- daily_activity %>% mutate(Date = daily_activity$ActivityDate)
+
+```
+
+```{r}
+sleepday_v2$Date <- as.Date(sleepday_v2$Date, "%m/%d/%Y") #The default format is yyyy-mm-dd
+sleepday_v2$month <- format(as.Date(sleepday_v2$SleepDate), "%m")
+sleepday_v2$day <- format(as.Date(sleepday_v2$SleepDate), "%d")
+sleepday_v2$year <- format(as.Date(sleepday_v2$SleepDate), "%Y")
+sleepday_v2$day_of_week <- format(as.Date(sleepday_v2$SleepDate), "%A")
+daily_activity_v2$Date <- as.Date(daily_activity_v2$Date,"%m/%d/%Y") #The default format is yyyy-mm-dd
+daily_activity_v2$month <- format(as.Date(daily_activity_v2$ActivityDate), "%m")
+daily_activity_v2$day <- format(as.Date(daily_activity_v2$ActivityDate), "%d")
+daily_activity_v2$year <- format(as.Date(daily_activity_v2$ActivityDate), "%Y")
+daily_activity_v2$day_of_week <- format(as.Date(daily_activity_v2$ActivityDate), "%A")
+```
+
+### I could add the time of day...but inspecting the data you can see that all entrys are taken on the same time of the day.
+# create breaks
+#breaks <- hour(hm("00:00", "6:00", "12:00", "18:00", "23:59"))
+# labels for the breaks
+#labels <- c("Night", "Morning", "Afternoon", "Evening")
+### Leavint the codes for learning purposes, using lubridate as library. Note: Data must be a date time column of course. 
+
+### Merging,  we have two data sets, IJ uses an inner join, keeping only rows matched in the two datasets. OJ sticks to the outer join concept, kepping all values and joining them if posible, I decided this approach as a complete view but having the leaking data of missing dates.
+
+```{r}
+combined_data_ij <- merge(sleepday_v2, daily_activity_v2, by=c("Id","Date","month","day","year","day_of_week"))
+combined_data_oj <- merge(sleepday_v2, daily_activity_v2, by=c("Id","Date","month","day","year","day_of_week"), all=TRUE)
+```
+
+### Grouping data into a new data frame to analyze.
+
+```{r}
+df <- combined_data_oj %>% 
+  mutate(weekday = wday(SleepDate, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(weekday) %>%  #groups by usertype and weekday
+  summarise(Observations = n()							#calculates the number of rides and average duration 
+  ,average_sleep_duration = mean(TotalTimeInBed), average_steps = mean(TotalSteps), average_distance = mean(TotalDistance)) %>% 		# calculates the average duration
+  arrange(weekday)								# sorts
+df
+```
+```{r}
+ggplot(data=combined_data_oj, aes(x=TotalMinutesAsleep, y=Calories)) + geom_point()
+```
+
+```{r}
+ggplot(data=combined_data_oj, aes(x=TotalTimeInBed, y=SedentaryMinutes)) + geom_point()
+```
