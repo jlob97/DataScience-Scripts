@@ -1,13 +1,12 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 ### Loading and installing packages for working
 
 ```{r}
-install.packages("tidyverse")
-install.packages("lubridate")
-install.packages("ggplot2")
 library(tidyverse)
 library(lubridate)
 library(ggplot2)
@@ -94,30 +93,6 @@ ggplot(data=daily_activity, aes(x=TotalSteps, y=SedentaryMinutes)) + geom_point(
 ggplot(data=sleep_day, aes(x=TotalMinutesAsleep, y=TotalTimeInBed)) + geom_point()
 ```
 
-## Merging these two datasets together, to see if time in bed and sedentary minutes also have a relationship.
-
-```{r}
-combined_data_ij <- merge(sleep_day, daily_activity, by="Id")
-```
-
-```{r}
-n_distinct(combined_data$Id)
-```
-
-### Merged with a inner join, merging an second data with outer join to keep the data from both.
-
-```{r}
-combined_data_oj <- merge(sleep_day, daily_activity, by="Id", all=TRUE)
-```
-
-```{r}
-n_distinct(combined_data$Id)
-```
-### Working with the dataset to get more data.
-
-```{r}
-str(combined_data_ij)
-```
 ### Found a problem with format of SleepDay and Activity Date, fixing it by extracting a part of the string to match. Good practice is to not modify the initial dataaset, so im creating v2.
 # Resources (https://stackoverflow.com/questions/17031002/get-weekdays-in-english-in-r)
 
@@ -129,15 +104,15 @@ daily_activity_v2 <- daily_activity %>% mutate(Date = daily_activity$ActivityDat
 
 ```{r}
 sleepday_v2$Date <- as.Date(sleepday_v2$Date, "%m/%d/%Y") #The default format is yyyy-mm-dd
-sleepday_v2$month <- format(as.Date(sleepday_v2$SleepDate), "%m")
-sleepday_v2$day <- format(as.Date(sleepday_v2$SleepDate), "%d")
-sleepday_v2$year <- format(as.Date(sleepday_v2$SleepDate), "%Y")
-sleepday_v2$day_of_week <- format(as.Date(sleepday_v2$SleepDate), "%A")
+sleepday_v2$month <- format(as.Date(sleepday_v2$Date), "%m")
+sleepday_v2$day <- format(as.Date(sleepday_v2$Date), "%d")
+sleepday_v2$year <- format(as.Date(sleepday_v2$Date), "%Y")
+sleepday_v2$day_of_week <- format(as.Date(sleepday_v2$Date), "%A")
 daily_activity_v2$Date <- as.Date(daily_activity_v2$Date,"%m/%d/%Y") #The default format is yyyy-mm-dd
-daily_activity_v2$month <- format(as.Date(daily_activity_v2$ActivityDate), "%m")
-daily_activity_v2$day <- format(as.Date(daily_activity_v2$ActivityDate), "%d")
-daily_activity_v2$year <- format(as.Date(daily_activity_v2$ActivityDate), "%Y")
-daily_activity_v2$day_of_week <- format(as.Date(daily_activity_v2$ActivityDate), "%A")
+daily_activity_v2$month <- format(as.Date(daily_activity_v2$Date), "%m")
+daily_activity_v2$day <- format(as.Date(daily_activity_v2$Date), "%d")
+daily_activity_v2$year <- format(as.Date(daily_activity_v2$Date), "%Y")
+daily_activity_v2$day_of_week <- format(as.Date(daily_activity_v2$Date), "%A")
 ```
 
 ### I could add the time of day...but inspecting the data you can see that all entrys are taken on the same time of the day.
@@ -158,7 +133,7 @@ combined_data_oj <- merge(sleepday_v2, daily_activity_v2, by=c("Id","Date","mont
 
 ```{r}
 df <- combined_data_oj %>% 
-  mutate(weekday = wday(SleepDate, label = TRUE)) %>%  #creates weekday field using wday()
+  mutate(weekday = wday(Date, label = TRUE)) %>%  #creates weekday field using wday()
   group_by(weekday) %>%  #groups by usertype and weekday
   summarise(Observations = n()							#calculates the number of rides and average duration 
   ,average_sleep_duration = mean(TotalTimeInBed), average_steps = mean(TotalSteps), average_distance = mean(TotalDistance)) %>% 		# calculates the average duration
