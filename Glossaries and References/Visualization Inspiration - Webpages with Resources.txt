@@ -1,0 +1,7 @@
+Visualizations Catalogue - https://datavizcatalogue.com/#google_vignette
+Good examples to inspire - https://www.tableau.com/learn/articles/best-data-visualization-blogs
+More Examples to inspire - https://visme.co/blog/best-data-visualizations/
+Python Graphs 			 - https://www.python-graph-gallery.com/
+More Resources 			 - https://www.storytellingwithdata.com/
+- 						 - https://informationisbeautiful.net/
+

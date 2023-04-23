@@ -1,0 +1,4 @@
+English Days - Needed for my Spanish OS
+Sys.setlocale("LC_TIME", "en_US")
+https://stackoverflow.com/questions/17031002/get-weekdays-in-english-in-r
+
