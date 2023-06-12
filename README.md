@@ -15,4 +15,4 @@ www.bit.ly/JLOB_Portfolio1
 
 Tree with GridSearch and XGBoosting, Classification: Client classification project for a telecommunications company with the intention of finding patterns in users of postpaid plans. The project focuses on assigning labels or predefined classes to data points, through supervised predictive models.
 
-ww.bit.ly/JLOB_Portfolio3
+www.bit.ly/JLOB_Portfolio3
