@@ -9,4 +9,4 @@ Finally, you are welcomed to fix it if you find any issues.
 Disclaimer: All these scripts are made by myself and are free to use and do not include any personal/business data.
 
 Portfolio 
-K-Means Project: https://deepnote.com/workspace/portfolio-c49b-0024ea6a-0aa6-4e03-9729-dd74cc997617/project/K-Means-Project-6a1a75de-3f7f-4214-9e6a-21ea9eccaee1/notebook/Github%20Edition-da8865907cc4494a994e63f50a0ecd49
+K-Means Project: https://deepnote.com/workspace/portfolio-c49b-0024ea6a-0aa6-4e03-9729-dd74cc997617/project/K-Means-Project-6a1a75de-3f7f-4214-9e6a-21ea9eccaee1/notebook/Github%20Edition-6f70006c511843009e2f5bfaca1b1111
