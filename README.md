@@ -16,4 +16,4 @@ K-Means Segmentation: Customer segmentation project for a telecommunications com
 
 Tree with GridSearch and XGBoosting, Classification: Client classification project for a telecommunications company with the intention of finding patterns in users of postpaid plans. The project focuses on assigning labels or predefined classes to data points, through supervised predictive models.
 
-
+PS: Outdated, since most of my code is not available to be public. 
